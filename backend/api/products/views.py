@@ -1,7 +1,10 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import ProductFilter
 
 from .models import (
     Product,
@@ -19,16 +22,22 @@ class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
-    filter_backends = [SearchFilter]
+
+    filter_backends = [
+        DjangoFilterBackend,
+        SearchFilter,
+    ]
+
+
+    filterset_class = ProductFilter
 
     search_fields = [
         "name",
         "synopsis",
         "brand__name",
         "ram",
-        "storage"
+        "storage",
     ]
-
 
 class ProductFilterOptionsView(APIView):
 
