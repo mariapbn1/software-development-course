@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     # Models
     'api.users',
     'api.products',
+    'api.comments',
 ]
 
 MIDDLEWARE = [
@@ -83,7 +84,7 @@ DATABASES = {
         'USER': 'postgres',
         'PASSWORD': os.environ['DATABASE_PASSWORD'],
         'HOST': os.environ['DATABASE_HOST'],
-        'PORT': os.environ['DATABASE_PORT'],
+        'PORT': 5432,
         'ATOMIC_REQUESTS': True,
     },
 }
