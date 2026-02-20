@@ -5,4 +5,5 @@ admin.autodiscover()
 
 urlpatterns = [
     path('users/', include('api.users.urls', namespace='users')),
+    path("comments/", include("api.comments.urls", namespace='comments')),
 ]

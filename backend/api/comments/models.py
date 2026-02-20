@@ -1,5 +1,8 @@
 from django.db import models
 
+from api.products.models import Product
+
+
 class Comment(models.Model):
     user = models.CharField(max_length=50)
     date = models.DateField()
@@ -12,3 +15,5 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.date}"
+
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
