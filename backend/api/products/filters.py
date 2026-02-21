@@ -1,5 +1,6 @@
 import django_filters
 from .models import Product
+from django_filters import NumberFilter
 
 
 # ---------- GENERIC IN FILTERS ----------
@@ -18,11 +19,31 @@ class CharInFilter(
     pass
 
 
-class BooleanInFilter(
-    django_filters.BaseInFilter,
-    django_filters.BooleanFilter
-):
-    pass
+class BooleanInFilter(django_filters.Filter):
+
+    def filter(self, qs, value):
+
+        if value in (None, ""):
+            return qs
+
+        # ensure list
+        if isinstance(value, str):
+            value = value.split(",")
+
+        bool_values = []
+
+        for v in value:
+            if str(v).lower() in ["1", "true"]:
+                bool_values.append(True)
+            elif str(v).lower() in ["0", "false"]:
+                bool_values.append(False)
+
+        if not bool_values:
+            return qs
+
+        return qs.filter(**{
+            f"{self.field_name}__in": bool_values
+        })
 
 
 class DateInFilter(
@@ -84,21 +105,21 @@ class ProductFilter(django_filters.FilterSet):
     )
 
     # Dates
-    release_date = DateInFilter(
-        field_name="release_date",
+    release_year = NumberInFilter(
+        field_name="release_date__year",
         lookup_expr="in"
     )
 
     # Boolean
     has_nfc = BooleanInFilter(
-        field_name="has_nfc",
-        lookup_expr="in"
+        field_name="has_nfc"
     )
 
     has_headphone_jack = BooleanInFilter(
-        field_name="has_headphone_jack",
-        lookup_expr="in"
+        field_name="has_headphone_jack"
     )
+
+
 
     class Meta:
         model = Product

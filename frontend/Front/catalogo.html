@@ -1,103 +1,266 @@
 <!doctype html>
 <html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Catálogo | Inventario</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-  </head>
-  <body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
-      <div class="container">
-        <a class="navbar-brand fw-semibold" href="#">Inventario</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarMain"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarMain">
-          <ul class="navbar-nav me-auto">
-            <li class="nav-item">
-              <a class="nav-link active" href="#">Catálogo</a>
-            </li>
-          </ul>
-          <div class="d-flex">
-            <button
-              class="btn btn-outline-light btn-sm"
-              onclick="
-                sessionStorage.clear();
-                location.href = './index.html';
-              "
-            >
-              Salir
-            </button>
-          </div>
-        </div>
-      </div>
-    </nav>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Catálogo | Inventario</title>
 
-    <div class="container mt-5">
-      <div class="row">
-        <div class="col-md-4">
-          <div class="card p-3 shadow-sm">
-            <h5 class="fw-bold">Filtros</h5>
-            <hr />
-            <label class="small">RAM mínima (GB)</label>
-            <select id="ramFilter" class="form-select mb-3">
-              <option value="0">Todas</option>
-              <option value="4">4 GB</option>
-              <option value="8">8 GB</option>
-              <option value="12">12 GB</option>
-            </select>
-            <button class="btn btn-dark w-100" id="btnFiltrar">Filtrar</button>
-          </div>
-        </div>
-        <div class="col-md-8">
-          <div id="listaCards" class="row row-cols-1 row-cols-md-2 g-3"></div>
-        </div>
-      </div>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    
+</head>
+  <body class="bg-light">
+<nav class="navbar navbar-dark bg-dark shadow-sm mb-4">
+  <div class="container justify-content-center">
+    <a class="navbar-brand fw-bold" href="#">
+      MOBILE PHONE
+    </a>
+  </div>
+</nav>
+
+   <div class="container-fluid mt-5">
+
+
+
+
+
+    
+<div class="row mb-4 align-items-center">
+  <!-- SEARCH BAR (left, wider) -->
+  <div class="col-md-8">
+    <input
+      type="text"
+      id="searchInputCatalog"
+      class="form-control form-control-lg"
+      placeholder="Buscar dispositivos..."
+    />
+  </div>
+
+  <!-- SORT DROPDOWN (right, width fits content) -->
+  <div class="col-md-4">
+    <select
+      id="sortCatalog"
+      class="form-select form-select-lg"
+      style="width: auto; display: inline-block;"
+    >
+      <option value="">Ordenar por</option>
+      <option value="release_date">Fecha lanzamiento ↑ (Antiguos primero)</option>
+      <option value="-release_date">Fecha lanzamiento ↓ (Nuevos primero)</option>
+      <option value="brand__name">Marca A → Z</option>
+      <option value="-brand__name">Marca Z → A</option>
+      <option value="name">Nombre A → Z</option>
+      <option value="-name">Nombre Z → A</option>
+    </select>
+  </div>
+</div>
+
+<div class="row">
+  <!-- SIDEBAR -->
+  <div class="col-md-4 sidebar-col">
+    <div class="card p-3 shadow-sm">
+      <h5 class="fw-bold">Filtros</h5>
+      <hr />
+      <div id="filtersContainer"></div>
     </div>
+  </div>
+
+  <!-- PRODUCT LIST -->
+  <div class="col-md-8">
+    <div id="listaCards" class="row row-cols-1 row-cols-md-2 g-3"></div>
+  </div>
+</div>
+    
+
+
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="Javascript/scripts.js"></script>
+    <script src="../Javascript/scripts.js"></script>
     
     
     <script>
-      const API_BASE = "http://127.0.0.1:8000/api/users";
+      
+      const loadFilters = async () => {
 
-      const fetchFiltered = async () => {
-        const ramValue = document.getElementById("ramFilter").value;
-        const res = await fetch(`${API_BASE}/products/`);
-        let data = await res.json();
+  const res = await fetch(`${API_BASE}/products/filters/`);
+  const filters = await res.json();
 
-        if (ramValue != "0") {
-          data = data.filter((p) => p.ram == ramValue);
-        }
+  const container = document.getElementById("filtersContainer");
 
-        document.getElementById("listaCards").innerHTML = data
-          .map(
-            (p) => `
-        <div class="col">
-          <div class="card h-100 border-0 shadow-sm p-3">
-            <h5 class="fw-bold">${p.name}</h5>
-            <p class="text-muted small">${p.synopsis}</p>
-            <p class="mb-0"><strong>RAM:</strong> ${p.ram}GB</p>
-            <a href="detalle.html?id=${p.id}" class="btn btn-sm btn-dark mt-3">Detalles</a>
-          </div>
+const createCheckboxGroup = (label, field, values, textFn = v => v) => `
+  <div class="mb-3">
+    <strong>${label}</strong>
+    ${values.map(v => `
+      <div class="form-check">
+<input
+  class="form-check-input filter-checkbox"
+  type="checkbox"
+  data-field="${field}"
+  value="${
+    typeof v === "boolean"
+      ? (v ? "true" : "false")
+      : (v.id ?? v)
+  }"
+>
+        <label class="form-check-label">
+          ${textFn(v)}
+        </label>
+      </div>
+    `).join("")}
+  </div>
+`;
+container.innerHTML = `
+  ${createCheckboxGroup("Marca","brand",filters.brands,v=>v.name)}
+  ${createCheckboxGroup("Color","color",filters.colors,v=>v.name)}
+  ${createCheckboxGroup("Sistema Operativo","operating_system",
+    filters.operating_systems,v=>v.name)}
+  ${createCheckboxGroup("Red","max_supported_network",
+    filters.networks,v=>v.name)}
+
+  ${createCheckboxGroup("RAM","ram",filters.ram)}
+  ${createCheckboxGroup("Almacenamiento","storage",filters.storage)}
+
+  ${createCheckboxGroup("Batería","max_battery",
+    filters.max_battery)}
+
+  ${createCheckboxGroup("Cámara Principal",
+    "main_camera_res",
+    filters.main_camera_res)}
+
+  ${createCheckboxGroup("Cámara Selfie",
+    "selfie_camera_res",
+    filters.selfie_camera_res)}
+
+  ${createCheckboxGroup("NFC","has_nfc",
+    filters.has_nfc,v=>v ? "Sí":"No")}
+
+  ${createCheckboxGroup("Jack Audífonos",
+    "has_headphone_jack",
+    filters.has_headphone_jack,
+    v=>v ? "Sí":"No")}
+
+  ${createCheckboxGroup("Año Lanzamiento",
+    "release_year",
+    filters.release_years)}
+`;
+
+};
+
+const fetchFiltered = async () => {
+
+  const params = new URLSearchParams();
+
+  // ===== SORTING =====
+const sortValue =
+  document.getElementById("sortCatalog")?.value;
+
+if (sortValue) {
+  params.append("ordering", sortValue);
+}
+
+  const searchTerm =
+  document.getElementById("searchInputCatalog")?.value?.trim();
+
+if (searchTerm) {
+  params.append("search", searchTerm);
+}
+
+  const selected = {};
+
+  document.querySelectorAll(".filter-checkbox:checked")
+    .forEach(cb => {
+
+      const field = cb.dataset.field;
+
+      if (!selected[field]) {
+        selected[field] = [];
+      }
+
+      selected[field].push(cb.value);
+    });
+
+ Object.entries(selected).forEach(([field,values])=>{
+  params.append(field, values.join(","));
+});
+
+  const url =
+    `${API_BASE}/products/?${params.toString()}`;
+
+  const res = await fetch(url);
+  const data = await res.json();
+
+  document.getElementById("listaCards").innerHTML =
+    data.map(p=>`
+      <div class="col">
+        <div class="card h-100 border-0 shadow-sm p-3">
+          <h5 class="fw-bold">${p.name}</h5>
+          <p class="text-muted small">${p.synopsis}</p>
+          <p><strong>RAM:</strong> ${p.ram} GB</p>
+          <p><strong>Fecha lanzamiento:</strong> ${
+             new Date(p.release_date)
+             .toLocaleDateString("es-CO", {
+                 year: "numeric",
+                month: "long",
+                 day: "numeric"
+              })
+          }</p>
+          <a href="detalle.html?id=${p.id}"
+             class="btn btn-sm btn-dark mt-3">
+             Detalles
+          </a>
         </div>
-      `,
-          )
-          .join("");
-      };
+      </div>
+    `).join("");
+};
 
-      document.getElementById("btnFiltrar").onclick = fetchFiltered;
-      fetchFiltered();
+      
+(async () => {
+
+  await loadFilters();
+
+  document
+    .getElementById("filtersContainer")
+    .addEventListener("change", fetchFiltered);
+
+  document
+    .getElementById("searchInputCatalog")
+    .addEventListener("input", fetchFiltered);
+
+  document
+    .getElementById("sortCatalog")
+    .addEventListener("change", fetchFiltered);
+
+  fetchFiltered();
+
+})();
     </script>
+
+
+<footer class="app-footer mt-5">
+  <div class="container-fluid py-5">
+    <div class="row align-items-start">
+
+      <!-- Left: same width as sidebar -->
+      <div class="col-md-4">
+        <h5 class="fw-bold text-white">Mobile Phone</h5>
+      </div>
+
+      <!-- Right: contact info -->
+      <div class="col-md-8">
+        <h6 class="fw-semibold text-white">Contacto</h6>
+        <p class="footer-text mb-1">Bogotá - Colombia</p>
+        <p class="footer-text mb-1">exclusive@gmail.com</p>
+        <p class="footer-text">+601-8888-9999</p>
+      </div>
+
+    </div>
+  </div>
+</footer>
+
   </body>
 </html>

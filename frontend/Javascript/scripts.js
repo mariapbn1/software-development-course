@@ -147,6 +147,7 @@ renderTable(allProducts);
     document.getElementById('productBrand').value = product.brand;
     document.getElementById('productRam').value = product.ram;
     document.getElementById('productStorage').value = product.storage;
+    document.getElementById('productReleaseDate').value = product.release_date;
     document.getElementById('productBattery').value = product.max_battery;
     document.getElementById('productMainCam').value = product.main_camera_res;
     document.getElementById('productSelfieCam').value = product.selfie_camera_res;
@@ -193,7 +194,7 @@ renderTable(allProducts);
         has_nfc: document.getElementById('productNfc').checked,
         has_headphone_jack: document.getElementById('productJack').checked,
         product_image: document.getElementById('productImage').value,
-        release_date: new Date().toISOString().split('T')[0],
+        release_date:  document.getElementById('productReleaseDate').value,
         synopsis: document.getElementById('productDescription').value,
         color: parseInt(document.getElementById('productColor').value),
         max_supported_network: parseInt(document.getElementById('productNetwork').value),

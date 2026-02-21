@@ -5,9 +5,9 @@
 }
 
 body {
+  font-family: 'Inter', sans-serif;
   background-color: var(--brand-bg);
 }
-
 /* Tarjetas y sombras suaves */
 .card {
   border: 0;
@@ -22,4 +22,154 @@ body {
 /* Botones con leve transición */
 .btn {
   transition: all .15s ease-in-out;
+}
+
+/* =========================
+   STICKY FILTER SIDEBAR + SEARCH
+========================= */
+
+/* Keep sidebar sticky */
+.sidebar-col {
+  position: sticky;
+  top: 90px; /* navbar + spacing */
+  align-self: flex-start;
+  width: 300px;
+  padding-left: 2rem;
+  box-sizing: border-box;
+}
+
+/* Make search bar sticky to align with sidebar */
+#searchInputCatalog {
+  position: sticky;
+  top: 90px; /* same as sidebar */
+  z-index: 1020; /* above content */
+} 
+
+.sidebar-col .card {
+  max-height: calc(100vh - 110px);
+  overflow-y: auto;
+}
+
+#listaCards {
+  align-content: flex-start;
+}
+
+/* =========================
+   NAVBAR BRANDING
+========================= */
+
+.navbar-brand {
+  font-weight: 700;
+  letter-spacing: -1px;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.app-footer {
+  background-color: #000;  /* Black background */
+  color: #adb5bd;          /* Light gray text */
+  width: 100%;             /* Ensure full width */
+}
+
+.app-footer h5,
+.app-footer h6 {
+  color: #fff;
+}
+
+.footer-text {
+  font-size: 0.9rem;
+  color: #adb5bd;
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+/* Sticky footer layout */
+html, body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ONLY the main content grows to fill the page */
+main {
+  flex: 1;
+}
+
+/* Footer container full width with padding */
+.app-footer > .container {
+  max-width: 100%;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+/* Align "Mobile Phone" with sidebar */
+.app-footer .col-md-4 {
+  width: 300px;          /* same as sidebar width */
+  padding-left: 2rem;    /* same as sidebar padding-left */
+}
+
+/* Remove unnecessary margin */
+.app-footer .col-md-4 h5 {
+  margin-left: 0;
+}
+
+/* Optional: right-align contact info inside its column */
+.app-footer .col-md-8 {
+  text-align: left;       /* you can set right if you prefer spacing */
+}
+
+/* Responsive: stack columns on small screens */
+@media (max-width: 767.98px) {
+  .app-footer .col-md-4,
+  .app-footer .col-md-8 {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 1rem;
+    padding-left: 0;
+  }
+}
+.app-footer .row {
+  display: flex;
+  flex-wrap: wrap;
+}
+.app-footer .col-md-8 {
+  flex: 1;             /* take remaining width */
+}
+
+/* =========================
+   PRODUCT DETAIL PAGE STYLES
+========================= */
+
+/* Background same as catalog */
+body.detalle-page {
+  background: #f8f9fa;
+}
+
+/* Product image card */
+.product-img {
+  max-height: 400px;
+  object-fit: contain;
+  background: white;
+  border-radius: 15px;
+}
+
+/* Scrollable comments container */
+.comment-scroll {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Badges for tech specs */
+.badge-tech {
+  font-size: 0.9rem;
+  padding: 0.6em 1em;
 }
