@@ -120,8 +120,12 @@ Eliminar
       const res = await fetch(`${API_BASE}/products/`);
       if (!res.ok) throw new Error("Error connecting to API");
 
-      allProducts = await res.json();
-      renderTable(allProducts);
+    allProducts = await res.json();
+
+    // sort by ID ascending
+    allProducts.sort((a, b) => a.id - b.id);
+
+renderTable(allProducts);
 
     } catch (err) {
       console.error("Load error:", err);
