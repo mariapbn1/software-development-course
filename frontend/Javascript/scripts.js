@@ -57,9 +57,10 @@ const tbody = document.getElementById('productsTbody');
 if (tbody) {
 
   // Only admins can access
+if (window.location.pathname.endsWith('productos.html')) {
   const auth = sessionStorage.getItem('auth');
   if (!auth) window.location.href = 'index.html';
-
+}
   let allProducts = [];
   let editingProductId = null; // ✅ NEW (track edit mode)
 
@@ -282,27 +283,38 @@ if (commentsList) {
   const productId = new URLSearchParams(window.location.search).get('id');
 
   // Load product info
-  const loadDetail = async () => {
-    try {
-      const res = await fetch(`${API_BASE}/products/`);
-      const products = await res.json();
-      const p = products.find(x => x.id == productId);
-      if (!p) return;
-      document.getElementById('pName').textContent = p.name;
-      document.getElementById('pRam').textContent = `${p.ram} GB RAM`;
-      document.getElementById('pStorage').textContent = `${p.storage} GB`;
-      document.getElementById('pBattery').textContent = `${p.max_battery} mAh`;
-      document.getElementById('pSynopsis').textContent = p.synopsis;
-      document.getElementById('pCam').textContent = `${p.main_camera_res} MP`;
-      document.getElementById('pNfc').textContent = p.has_nfc ? "SÍ" : "NO";
-      document.getElementById('pDate').textContent = p.release_date;
-      // Optional: admin edit/delete buttons can be shown here if session exists
-    } catch (err) {
-      console.error("Error loading product detail:", err);
-      showToast("No se pudo cargar el producto");
-    }
-  };
+const loadDetail = async () => {
+  try {
+    const res = await fetch(`${API_BASE}/products/`);
+    const products = await res.json();
+    const p = products.find(x => x.id == productId);
+    if (!p) return;
 
+document.getElementById('pName').textContent = p.name;
+document.getElementById('breadcrumbProduct').textContent = p.name;
+document.getElementById('pImg').src = p.product_image;
+document.getElementById('pSynopsis').textContent = p.synopsis;
+
+document.getElementById('pRam').textContent = `${p.ram} GB`;
+document.getElementById('pStorage').textContent = `${p.storage} GB`;
+document.getElementById('pBattery').textContent = `${p.max_battery} mAh`;
+
+document.getElementById('pCam').textContent = `${p.main_camera_res} MP`;
+document.getElementById('pSelfieCam').textContent = `${p.selfie_camera_res} MP`;
+document.getElementById('pNfc').textContent = p.has_nfc ? "SÍ" : "NO";
+document.getElementById('pJack').textContent = p.has_headphone_jack ? "SÍ" : "NO";
+
+document.getElementById('pDate').textContent = p.release_date;
+document.getElementById('pBrand').textContent = p.brand;
+document.getElementById('pColor').textContent = p.color;
+document.getElementById('pOS').textContent = p.operating_system;
+document.getElementById('pNetwork').textContent = p.max_supported_network;
+
+  } catch (err) {
+    console.error("Error loading product detail:", err);
+    showToast("No se pudo cargar el producto");
+  }
+};
   // Load comments
   const loadComments = async () => {
     try {
