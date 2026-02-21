@@ -1,0 +1,25 @@
+/* Paleta corporativa */
+:root{
+  --brand-primary: #0d6efd; /* Bootstrap primary */
+  --brand-bg: #f8f9fa;
+}
+
+body {
+  background-color: var(--brand-bg);
+}
+
+/* Tarjetas y sombras suaves */
+.card {
+  border: 0;
+  border-radius: 0.5rem;
+}
+
+/* Tabla: filas sutilmente destacadas */
+.table-hover tbody tr:hover {
+  background-color: rgba(13, 110, 253, 0.05);
+}
+
+/* Botones con leve transición */
+.btn {
+  transition: all .15s ease-in-out;
+}
