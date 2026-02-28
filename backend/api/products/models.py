@@ -27,7 +27,11 @@ class Product(models.Model):
     selfie_camera_res = models.FloatField()
     has_nfc = models.BooleanField(default=False)
     has_headphone_jack = models.BooleanField(default=True)
-    product_image = models.URLField(max_length=250)
+    product_image = models.ImageField(
+        upload_to='products/images/',
+        null=True,
+        blank=True
+    )
     synopsis = models.TextField()
 
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)

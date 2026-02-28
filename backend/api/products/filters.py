@@ -1,9 +1,7 @@
 import django_filters
+
 from .models import Product
-from django_filters import NumberFilter
 
-
-# ---------- GENERIC IN FILTERS ----------
 
 class NumberInFilter(
     django_filters.BaseInFilter,
@@ -56,7 +54,6 @@ class DateInFilter(
 # ---------- PRODUCT FILTER ----------
 
 class ProductFilter(django_filters.FilterSet):
-
     # Relations
     brand = NumberInFilter(
         field_name="brand__id",
@@ -119,8 +116,10 @@ class ProductFilter(django_filters.FilterSet):
         field_name="has_headphone_jack"
     )
 
-
-
     class Meta:
         model = Product
-        fields = "__all__"
+        fields = [
+            'brand', 'operating_system', 'max_supported_network',
+            'color', 'ram', 'storage', 'max_battery', 'main_camera_res',
+            'selfie_camera_res', 'release_date', 'has_nfc', 'has_headphone_jack'
+        ]

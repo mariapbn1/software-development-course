@@ -1,11 +1,10 @@
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from .filters import ProductFilter
 
+from .filters import ProductFilter
 from .models import (
     Product,
     Brand,
@@ -13,22 +12,18 @@ from .models import (
     MaxSupportNetwork,
     OperatingSystem
 )
-
 from .serializers import ProductSerializer
 
 
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-
     filter_backends = [
         DjangoFilterBackend,
         SearchFilter,
         OrderingFilter,
     ]
-
     filterset_class = ProductFilter
-
     search_fields = [
         "name",
         "synopsis",
@@ -36,8 +31,6 @@ class ProductViewSet(ModelViewSet):
         "ram",
         "storage",
     ]
-
-
     ordering_fields = [
         "release_date",
         "name",
@@ -45,12 +38,12 @@ class ProductViewSet(ModelViewSet):
     ]
     ordering = ["name"]
 
+
 class ProductFilterOptionsView(APIView):
 
     def get(self, request):
         data = {
 
-            # ---------- RELATIONS ----------
             "brands": list(
                 Brand.objects.values("id", "name")
             ),
@@ -67,7 +60,6 @@ class ProductFilterOptionsView(APIView):
                 OperatingSystem.objects.values("id", "name")
             ),
 
-            # ---------- DISCRETE NUMERIC ----------
             "ram": list(
                 Product.objects.values_list(
                     "ram", flat=True
@@ -98,11 +90,9 @@ class ProductFilterOptionsView(APIView):
                 ).distinct().order_by("selfie_camera_res")
             ),
 
-            # ---------- BOOLEAN ----------
             "has_nfc": [True, False],
             "has_headphone_jack": [True, False],
 
-            # ---------- RELEASE YEARS ----------
             "release_years": [
                 d.year for d in
                 Product.objects.dates(
