@@ -5,12 +5,7 @@ from api.users.models import User
 
 
 class Comment(models.Model):
-    date = models.DateField()
-    email = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True
-    )
+    date = models.DateField(auto_now=True)
     comment = models.TextField()
 
     product = models.ForeignKey(Product, on_delete=models.CASCADE)

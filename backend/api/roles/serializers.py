@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from backend.api.roles.models import Role
+from api.roles.models import Role
 
 
 class RoleSerializer(serializers.ModelSerializer):
