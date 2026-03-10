@@ -173,3 +173,19 @@ body.detalle-page {
   font-size: 0.9rem;
   padding: 0.6em 1em;
 }
+
+.table-responsive {
+overflow-x: auto;
+}
+
+/* =========================
+   ADMIN PANEL
+========================= */
+
+.sticky-actions {
+position: sticky;
+right: 0;
+background: white;
+box-shadow: -2px 0 4px rgba(0,0,0,0.05);
+min-width: 160px;
+}
