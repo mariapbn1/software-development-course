@@ -8,4 +8,5 @@ urlpatterns = [
     path("comments/", include("api.comments.urls", namespace='comments')),
     path("products/", include("api.products.urls", namespace='products')),
     path("roles/", include("api.roles.urls", namespace='roles')),
+    path("reports/", include("api.reports.urls", namespace='reports')),
 ]
