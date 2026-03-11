@@ -572,11 +572,18 @@ Eliminar
                   <label class="form-check-label">Tiene Jack 3.5mm</label>
                 </div>
               </div>
-
-              <div class="col-md-6">
-                <label class="form-label">Imagen URL</label>
-                <input type="text" id="productImage" class="form-control">
-              </div>
+<div class="col-md-6">
+  <label class="form-label">Imagen del producto</label>
+  <div class="d-flex align-items-center gap-3">
+    <img id="productImagePreview"
+         src=""
+         alt="Previsualización"
+         style="height:60px;width:60px;object-fit:cover;border-radius:8px;border:1px solid #dee2e6;display:none;">
+    <div>
+      <input type="file" id="productImageFile" class="form-control" accept="image/*">
+    </div>
+  </div>
+</div>
 
               <div class="col-12">
                 <label class="form-label">Descripción</label>

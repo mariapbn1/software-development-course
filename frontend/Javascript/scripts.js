@@ -139,7 +139,7 @@ ${escapeHtml(p.name)}
 <td>${p.operating_system?.name || "-"}</td>
 
 <td>
-<img src="${p.product_image}" style="height:40px;border-radius:6px;">
+<img src="${p.product_image ? (p.product_image.startsWith('http') ? p.product_image : 'http://127.0.0.1:8000/media/' + p.product_image) : ''}" style="height:40px;border-radius:6px;">
 </td>
 
 <td class="small text-muted" style="max-width:200px;">
@@ -196,7 +196,7 @@ Eliminar
       if (title) title.textContent = "Editar Dispositivo";
 
       document.getElementById("productName").value = product.name;
-      document.getElementById("productBrand").value = product.brand.id;
+      document.getElementById("productBrand").value = product.brand_id ?? product.brand;
       document.getElementById("productRam").value = product.ram;
       document.getElementById("productStorage").value = product.storage;
       document.getElementById("productReleaseDate").value =
@@ -211,16 +211,33 @@ Eliminar
       document.getElementById("productJack").checked =
         product.has_headphone_jack;
 
-      document.getElementById("productImage").value = product.product_image;
+      const preview = document.getElementById("productImagePreview");
+preview.src = product.product_image || "";
+preview.style.display = product.product_image ? "block" : "none";
+// Clear any previously selected file
+document.getElementById("productImageFile").value = "";
       document.getElementById("productDescription").value = product.synopsis;
 
-      document.getElementById("productColor").value = product.color.id;
-      document.getElementById("productNetwork").value =
-        product.max_supported_network.id;
-      document.getElementById("productOS").value = product.operating_system.id;
+document.getElementById("productColor").value = product.color_id ?? product.color;
+      document.getElementById("productNetwork").value = product.max_supported_network_id ?? product.max_supported_network;
+      document.getElementById("productOS").value = product.operating_system_id ?? product.operating_system;
 
       new bootstrap.Modal(document.getElementById("productModal")).show();
     };
+
+    const fileInput = document.getElementById("productImageFile");
+    if (fileInput) {
+      fileInput.addEventListener("change", () => {
+        const file = fileInput.files[0];
+        if (file) {
+          const preview = document.getElementById("productImagePreview");
+          preview.src = URL.createObjectURL(file);
+          preview.style.display = "block";
+        }
+      });
+    }
+
+    
 
     const searchInput = document.getElementById("searchInput");
 
@@ -242,56 +259,38 @@ Eliminar
       productForm.onsubmit = async (e) => {
         e.preventDefault();
 
-        const payload = {
-          name: document.getElementById("productName").value,
-          brand: parseInt(document.getElementById("productBrand").value),
+const formData = new FormData();
+formData.append("name", document.getElementById("productName").value);
+formData.append("brand", parseInt(document.getElementById("productBrand").value));
+formData.append("ram", parseInt(document.getElementById("productRam").value));
+formData.append("storage", parseInt(document.getElementById("productStorage").value));
+formData.append("max_battery", parseInt(document.getElementById("productBattery").value));
+formData.append("main_camera_res", parseFloat(document.getElementById("productMainCam").value));
+formData.append("selfie_camera_res", parseFloat(document.getElementById("productSelfieCam").value));
+formData.append("has_nfc", document.getElementById("productNfc").checked);
+formData.append("has_headphone_jack", document.getElementById("productJack").checked);
+formData.append("release_date", document.getElementById("productReleaseDate").value);
+formData.append("synopsis", document.getElementById("productDescription").value);
+formData.append("color", parseInt(document.getElementById("productColor").value));
+formData.append("max_supported_network", parseInt(document.getElementById("productNetwork").value));
+formData.append("operating_system", parseInt(document.getElementById("productOS").value));
 
-          ram: parseInt(document.getElementById("productRam").value),
-          storage: parseInt(document.getElementById("productStorage").value),
+const fileInput = document.getElementById("productImageFile");
+if (fileInput.files.length > 0) {
+  formData.append("product_image", fileInput.files[0]);
+}
 
-          max_battery: parseInt(
-            document.getElementById("productBattery").value,
-          ),
+try {
+  const url = editingProductId
+    ? `${API_BASE}/products/${editingProductId}/`
+    : `${API_BASE}/products/`;
 
-          main_camera_res: parseInt(
-            document.getElementById("productMainCam").value,
-          ),
-          selfie_camera_res: parseInt(
-            document.getElementById("productSelfieCam").value,
-          ),
+  const method = editingProductId ? "PATCH" : "POST";
 
-          has_nfc: document.getElementById("productNfc").checked,
-          has_headphone_jack: document.getElementById("productJack").checked,
-
-          product_image: document.getElementById("productImage").value,
-
-          release_date: document.getElementById("productReleaseDate").value,
-
-          synopsis: document.getElementById("productDescription").value,
-
-          color: parseInt(document.getElementById("productColor").value),
-
-          max_supported_network: parseInt(
-            document.getElementById("productNetwork").value,
-          ),
-
-          operating_system: parseInt(
-            document.getElementById("productOS").value,
-          ),
-        };
-
-        try {
-          const url = editingProductId
-            ? `${API_BASE}/products/${editingProductId}/`
-            : `${API_BASE}/products/`;
-
-          const method = editingProductId ? "PATCH" : "POST";
-
-          const res = await fetch(url, {
-            method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
+  const res = await fetch(url, {
+    method,
+    body: formData,   // No "headers" key here — removing it is intentional
+  });
 
           if (res.ok) {
             bootstrap.Modal.getInstance(
@@ -371,7 +370,7 @@ Eliminar
         document.getElementById("pName").textContent = p.name;
         document.getElementById("breadcrumbProduct").textContent = p.name;
 
-        document.getElementById("pImg").src = p.product_image;
+        document.getElementById("pImg").src = p.product_image ? (p.product_image.startsWith('http') ? p.product_image : 'http://127.0.0.1:8000/media/' + p.product_image) : 'https://via.placeholder.com/400x300?text=Sin+imagen';
         document.getElementById("pSynopsis").textContent = p.synopsis;
 
         document.getElementById("pRam").textContent = `${p.ram} GB`;

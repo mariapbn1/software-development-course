@@ -186,10 +186,17 @@ if (searchTerm) {
   const res = await fetch(url);
   const data = await res.json();
 
-  document.getElementById("listaCards").innerHTML =
+document.getElementById("listaCards").innerHTML =
     data.map(p=>`
       <div class="col">
-        <div class="card h-100 border-0 shadow-sm p-3">
+<div class="card h-100 border-0 shadow-sm overflow-hidden">
+          <img
+            src="${p.product_image ? (p.product_image.startsWith('http') ? p.product_image : 'http://127.0.0.1:8000/media/' + p.product_image) : 'https://via.placeholder.com/300x200?text=Sin+imagen'}"
+            class="card-img-top"
+            style="height:180px; object-fit:contain; background-color:#f8f9fa;"
+            alt="${p.name}"
+          />
+          <div class="p-3">
           <h5 class="fw-bold">${p.name}</h5>
           <p class="text-muted small">${p.synopsis}</p>
           <p><strong>RAM:</strong> ${p.ram} GB</p>
@@ -205,6 +212,7 @@ if (searchTerm) {
              class="btn btn-sm btn-dark mt-3">
              Detalles
           </a>
+    </div>
         </div>
       </div>
     `).join("");
