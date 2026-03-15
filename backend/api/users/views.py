@@ -6,7 +6,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.viewsets import ModelViewSet
 
 from .models import User
-from .serializers import UserSerializer, UserDetailSerializer
+from .serializers import UserSerializer
 
 
 # Vista de Registro
@@ -22,10 +22,11 @@ class LoginView(APIView):
 
         if user:
             token, created = Token.objects.get_or_create(user=user)
+            token, created = Token.objects.get_or_create(user=user)
             return Response({'token': token.key}, status=status.HTTP_200_OK)
         return Response({'error': 'Credenciales inválidas'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class UsersViewSet(ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserDetailSerializer
+    queryset = User.objects.all().order_by('id')
+    serializer_class = UserSerializer
